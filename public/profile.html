@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J5F61R82ZJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-J5F61R82ZJ');
+</script>
+
+<script src="https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz"></script><script src="https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.8.0-min.js.gz"></script><script>window.amplitude.add(window.sessionReplay.plugin({sampleRate: 1}));window.amplitude.init('824d2d243dc20f7d04d46372ffbe0b7a', {"autocapture":{"elementInteractions":true}});</script>
+
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profile</title>
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/common.js" defer></script>
+<script defer>
+async function init(){
+  await buildTopBar({hasBack:true});
+  const r = await fetch('/api/profile',{credentials:'include'});
+  if(r.status===401){ window.location.href='/login.html'; return; }
+  const p = await r.json();
+  document.getElementById('name').textContent = p.name;
+  document.getElementById('surname').textContent = p.surname;
+  document.getElementById('email').textContent = p.email;
+  document.getElementById('code').textContent = p.code;
+  document.getElementById('paycount').textContent = p.payments_count;
+  document.getElementById('logout').addEventListener('click', async ()=>{
+    await fetch('/api/logout',{method:'POST',credentials:'include'});
+    window.location.href='/';
+  });
+}
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</head><body>
+<header></header>
+<div class="container">
+<h2>Profile</h2>
+<div class="card" style="padding:16px">
+  <div><strong>Name:</strong> <span id="name"></span></div>
+  <div><strong>Surname:</strong> <span id="surname"></span></div>
+  <div><strong>e-mail:</strong> <span id="email"></span></div>
+  <div style="margin-top:10px"><strong>Your customer code:</strong> <span id="code" class="mono"></span></div>
+  <div><strong>Number of previous purchases:</strong> <span id="paycount" class="mono"></span></div>
+  <div style="margin-top:14px"><button id="logout" class="btn">Log Out</button></div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,19 @@
+{
+  "name": "funnel-backend-pg-external-full-fix1",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Funnel backend (Express + external Postgres) with fixes: cart empty-pay guard, payment page text removal, profile labels",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": "20.x"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "express": "^4.19.2",
+    "pg": "^8.12.0"
+  }
+}

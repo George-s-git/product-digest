@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J5F61R82ZJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-J5F61R82ZJ');
+</script>
+
+<script src="https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz"></script><script src="https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.8.0-min.js.gz"></script><script>window.amplitude.add(window.sessionReplay.plugin({sampleRate: 1}));window.amplitude.init('824d2d243dc20f7d04d46372ffbe0b7a', {"autocapture":{"elementInteractions":true}});</script>
+
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Main</title>
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/common.js" defer></script>
+<script defer>
+async function init(){
+  await buildTopBar({hasBack:false});
+  const wrap = document.getElementById('products');
+  let data = [];
+  try { data = await (await fetch('/api/products')).json(); }
+  catch(e){
+    data = [
+      {id:1,name:'Starter Bundle',description:'Essential tools to get going fast.',price_cents:2900,image:'/img/p1.png'},
+      {id:2,name:'Pro Toolkit',description:'Everything you need to scale.',price_cents:4900,image:'/img/p2.png'},
+      {id:3,name:'Ultimate VIP',description:'Done-with-you premium package.',price_cents:9900,image:'/img/p3.png'}
+    ];
+  }
+  for(const p of data){
+    const card = document.createElement('div'); card.className='card';
+    card.innerHTML = `
+      <a href="/product${p.id}.html"><img src="${p.image}" alt="${p.name}"></a>
+      <div class="pad">
+        <h3><a href="/product${p.id}.html">${p.name}</a></h3>
+        <div class="small">${p.description}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+          <div class="price">$ ${(p.price_cents/100).toFixed(2)}</div>
+          <button class="btn primary" onclick="addToCart(${p.id})">Add to Cart</button>
+        </div>
+      </div>`;
+    wrap.appendChild(card);
+  }
+}
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</head><body>
+<header></header>
+<div class="container">
+<div id="products" class="grid"></div>
+</div>
+</body></html>

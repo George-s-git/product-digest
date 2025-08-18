@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J5F61R82ZJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-J5F61R82ZJ');
+</script>
+
+<script src="https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz"></script><script src="https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.8.0-min.js.gz"></script><script>window.amplitude.add(window.sessionReplay.plugin({sampleRate: 1}));window.amplitude.init('824d2d243dc20f7d04d46372ffbe0b7a', {"autocapture":{"elementInteractions":true}});</script>
+
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Log In</title>
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/common.js" defer></script>
+<script defer>
+async function init(){
+  await buildTopBar({hasBack:true});
+  const f = document.querySelector('form');
+  f.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const email=f.email.value.trim(), pass=f.pass.value;
+    const res = await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({email,pass})});
+    if(res.ok) window.location.href='/'; else alert('Login failed');
+  });
+  document.getElementById('registerBtn').addEventListener('click', ()=> window.location.href='/register.html');
+}
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</head><body>
+<header></header>
+<div class="container">
+<form>
+  <h2>Log In</h2>
+  <label>E-mail</label>
+  <input class="input" type="email" name="email" required>
+  <label>Pass</label>
+  <input class="input" type="password" name="pass" required>
+  <div class="actions">
+    <button class="btn primary" type="submit">Log In</button>
+  </div>
+  <div class="sep"></div>
+  <div>
+    <button class="btn" type="button" id="registerBtn">Register new customer</button>
+  </div>
+</form>
+</div>
+</body></html>

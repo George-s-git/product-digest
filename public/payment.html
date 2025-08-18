@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J5F61R82ZJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-J5F61R82ZJ');
+</script>
+
+<script src="https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz"></script><script src="https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.8.0-min.js.gz"></script><script>window.amplitude.add(window.sessionReplay.plugin({sampleRate: 1}));window.amplitude.init('824d2d243dc20f7d04d46372ffbe0b7a', {"autocapture":{"elementInteractions":true}});</script>
+
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Payment Successful</title>
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/common.js" defer></script>
+<script defer>
+async function init(){
+  await buildTopBar({hasBack:true});
+  const r = await fetch('/api/pay', {method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include'});
+  if(r.status===401){ window.location.href='/login.html'; return; }
+  if(r.status===400){ window.location.href='/cart.html'; return; }
+}
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</head><body>
+<header></header>
+<div class="container">
+<h1>Thank you! Payment Successful</h1>
+</div>
+</body></html>

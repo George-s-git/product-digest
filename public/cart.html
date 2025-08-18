@@ -1,0 +1,75 @@
+<!doctype html><html lang="en"><head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J5F61R82ZJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-J5F61R82ZJ');
+</script>
+
+<script src="https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz"></script><script src="https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.8.0-min.js.gz"></script><script>window.amplitude.add(window.sessionReplay.plugin({sampleRate: 1}));window.amplitude.init('824d2d243dc20f7d04d46372ffbe0b7a', {"autocapture":{"elementInteractions":true}});</script>
+
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cart</title>
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/common.js" defer></script>
+<script defer>
+let cartHasItems = false;
+async function init(){
+  await buildTopBar({hasBack:true});
+  await loadCart();
+  const payBtn = document.getElementById('payBtn');
+  payBtn.addEventListener('click', ()=>{
+    if(!cartHasItems){ return; } // do nothing on empty cart
+    window.location.href='/payment.html';
+  });
+}
+async function loadCart(){
+  const res = await fetch('/api/cart', {credentials:'include'});
+  if(res.status===401){ window.location.href='/login.html'; return; }
+  const data = await res.json();
+  const list = document.getElementById('cartList');
+  list.innerHTML = '';
+  let subtotal = 0;
+  for(const it of data.items){
+    subtotal += it.price_cents * it.quantity;
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <div>${it.name} <span class="small">x${it.quantity}</span></div>
+      <div><span class="price">$ ${(it.price_cents*it.quantity/100).toFixed(2)}</span>
+      <button class="btn danger" data-id="${it.product_id}">Remove</button></div>`;
+    list.appendChild(li);
+  }
+  cartHasItems = data.items && data.items.length > 0;
+  const payBtn = document.getElementById('payBtn');
+  if(cartHasItems){
+    payBtn.removeAttribute('disabled');
+    payBtn.classList.add('primary');
+  }else{
+    payBtn.setAttribute('disabled','disabled');
+    payBtn.classList.remove('primary');
+  }
+  document.getElementById('subtotal').textContent = '$ ' + (subtotal/100).toFixed(2);
+  list.querySelectorAll('button[data-id]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      await fetch('/api/cart/remove', {method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body: JSON.stringify({product_id:+btn.dataset.id})});
+      await loadCart();
+    });
+  });
+}
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</head><body>
+<header></header>
+<div class="container">
+<h2>Your Cart</h2>
+<ul id="cartList" class="list"></ul>
+<div class="subtotal" style="margin-top:10px;display:flex;align-items:center;gap:10px">
+  <div>Subtotal:</div>
+  <div id="subtotal" class="price">$ 0.00</div>
+  <button id="payBtn" class="btn">Pay Now</button>
+</div>
+</div>
+</body></html>

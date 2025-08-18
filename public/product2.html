@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J5F61R82ZJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-J5F61R82ZJ');
+</script>
+
+<script src="https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz"></script><script src="https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.8.0-min.js.gz"></script><script>window.amplitude.add(window.sessionReplay.plugin({sampleRate: 1}));window.amplitude.init('824d2d243dc20f7d04d46372ffbe0b7a', {"autocapture":{"elementInteractions":true}});</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pro Toolkit</title>
+<link rel="stylesheet" href="/css/style.css">
+<!-- Analytics placeholders: insert Amplitude/GA script tags here later -->
+<script src="/js/common.js" defer></script>
+<script defer>
+async function init(){
+  await buildTopBar({hasBack:true});
+  try{
+    const r = await fetch('/api/products/2');
+    const p = await r.json();
+    document.getElementById('price').textContent = '$ ' + (p.price_cents/100).toFixed(2);
+  }catch(e){ /* ok if API not live yet */ }
+}
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</head><body>
+<header></header>
+<div class="container">
+  <div class="hero">
+    <img src="/img/p2.png" alt="Pro Toolkit">
+    <div>
+      <h1 id="title">Pro Toolkit</h1>
+      <p class="small">Everything you need to scale.</p>
+      <p id="price" class="price">$ --</p>
+      <div class="actions"><button class="btn primary" onclick="addToCart(2)">Add to Cart</button></div>
+    </div>
+  </div>
+  <div class="sep"></div>
+  <div class="features">
+    <div class="card">All Starter features</div><div class="card">A/B test-ready sections</div><div class="card">Upsell/Downsell pages</div><div class="card">Webhook endpoints</div>
+  </div>
+  <div class="sep"></div>
+  <div class="card" style="padding:16px">
+    <h3>Overview</h3>
+    <p>Built for teams that want to iterate quickly. Modular blocks, event tracking stubs, and smooth performance.</p>
+    <p class="note">Tracking placeholders are ready — later you can paste Amplitude & GA snippets in the &lt;head&gt;.</p>
+  </div>
+</div>
+</body></html>
