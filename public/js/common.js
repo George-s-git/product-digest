@@ -46,6 +46,15 @@ async function addToCart(productId){
     const res = await fetch('/api/cart/add', {method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body: JSON.stringify({product_id: productId})});
     if(res.status===401){ window.location.href = '/login.html'; return; }
     if(res.ok){
+
+if (window.gtag) {
+  gtag('event', 'add_to_cart', {
+    items: [{ item_id: String(productId) }]  // GA4 expects an items[] array
+  });
+}
+if (window.amplitude && typeof amplitude.track === 'function') {
+  amplitude.track('add_to_cart', { product_id: productId });
+}
       alert('Added to cart');
       const s = await getJSON('/api/session');
       const a = document.querySelector('a[href="/cart.html"]');

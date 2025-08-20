@@ -20,12 +20,37 @@ async function init(){
   await buildTopBar({hasBack:true});
   const f = document.querySelector('form');
   f.addEventListener('submit', async (e)=>{
-    e.preventDefault();
-    const email=f.email.value.trim(), pass=f.pass.value;
-    const res = await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({email,pass})});
-    if(res.ok) window.location.href='/'; else alert('Login failed');
+  e.preventDefault();
+  const email=f.email.value.trim(), pass=f.pass.value;
+  const res = await fetch('/api/login', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    credentials:'include',
+    body: JSON.stringify({email,pass})
   });
-  document.getElementById('registerBtn').addEventListener('click', ()=> window.location.href='/register.html');
+
+  if (res.ok) {
+    // Emit analytics on successful login
+    if (window.gtag) gtag('event', 'login', { method: 'password' });
+    if (window.amplitude && typeof amplitude.track === 'function') {
+      amplitude.track('login', { method: 'password' });
+    }
+    window.location.href='/';
+  } else {
+    alert('Login failed');
+  }
+});
+  
+const regBtn = document.getElementById('registerBtn');
+regBtn.addEventListener('click', ()=>{
+  // Track the CTA click before navigating
+  if (window.gtag) gtag('event', 'click_register_cta', { location: 'login_page' });
+  if (window.amplitude && typeof amplitude.track === 'function') {
+  amplitude.track('click_register_cta', { location: 'login_page' });
+}
+  window.location.href = '/register.html';
+});
+
 }
 window.addEventListener('DOMContentLoaded', init);
 </script>

@@ -25,6 +25,16 @@ async function init(){
     const res = await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)});
     if(res.ok) window.location.href='/'; else alert('Registration failed');
   });
+
+// Track the CTA click on register page
+const createBtn = document.getElementById('createBtn');
+createBtn.addEventListener('click', ()=>{
+  if (window.gtag) gtag('event', 'click_register_cta', { location: 'register_page' });
+  if (window.amplitude && typeof amplitude.track === 'function') {
+  amplitude.track('click_register_cta', { location: 'register_page' });
+}
+});
+
 }
 window.addEventListener('DOMContentLoaded', init);
 </script>
@@ -42,7 +52,7 @@ window.addEventListener('DOMContentLoaded', init);
   <label>Pass</label>
   <input class="input" type="password" name="pass" required>
   <div class="actions">
-    <button class="btn primary" type="submit">Create account</button>
+    <button id="createBtn" class="btn primary" type="submit">Create account</button>
   </div>
 </form>
 </div>

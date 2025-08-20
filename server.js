@@ -142,13 +142,32 @@ app.post('/api/cart/remove', requireAuth, async (req,res)=>{
 });
 
 app.post('/api/pay', requireAuth, async (req,res)=>{
-  const cnt = await query('SELECT COUNT(*)::int AS c FROM carts WHERE user_id=$1',[req.userId]);
-  if(cnt.rows[0].c === 0){
-    return res.status(400).json({ok:false, error:'Cart is empty'});
+  // Read items first (before clearing the cart)
+  const r = await query(`
+    SELECT p.id AS product_id, p.name, p.price_cents, c.quantity
+    FROM carts c
+    JOIN products p ON p.id = c.product_id
+    WHERE c.user_id = $1
+    ORDER BY p.id
+  `, [req.userId]);
+
+  if (r.rows.length === 0) {
+    return res.status(400).json({ ok:false, error:'Cart is empty' });
   }
-  await query('UPDATE users SET payments_count = payments_count + 1 WHERE id=$1',[req.userId]);
-  await query('DELETE FROM carts WHERE user_id=$1',[req.userId]);
-  res.json({ok:true});
+
+  const items = r.rows.map(x => ({
+    product_id: x.product_id,
+    name: x.name,
+    quantity: x.quantity,
+    price_cents: x.price_cents
+  }));
+  const total_cents = items.reduce((s,i)=> s + i.price_cents * i.quantity, 0);
+
+  await query('UPDATE users SET payments_count = payments_count + 1 WHERE id=$1', [req.userId]);
+  await query('DELETE FROM carts WHERE user_id=$1', [req.userId]);
+
+  // Send rich payload for analytics
+  res.json({ ok:true, total_cents, currency:'USD', items });
 });
 
 app.get('/api/profile', requireAuth, async (req,res)=>{

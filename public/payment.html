@@ -15,15 +15,49 @@
 <title>Payment Successful</title>
 <link rel="stylesheet" href="/css/style.css">
 <script src="/js/common.js" defer></script>
+
 <script defer>
 async function init(){
   await buildTopBar({hasBack:true});
-  const r = await fetch('/api/pay', {method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include'});
-  if(r.status===401){ window.location.href='/login.html'; return; }
-  if(r.status===400){ window.location.href='/cart.html'; return; }
+
+  const r = await fetch('/api/pay', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    credentials:'include'
+  });
+
+  if (r.status === 401){ window.location.href='/login.html'; return; }
+  if (r.status === 400){ window.location.href='/cart.html';  return; }
+
+  // Only success below:
+  const data = await r.json(); // { ok, total_cents, currency, items }
+
+  // GA4 rich purchase
+  if (window.gtag) {
+    gtag('event', 'purchase', {
+      value: (data.total_cents || 0) / 100,
+      currency: data.currency || 'USD',
+      items: (data.items || []).map(i => ({
+        item_id: String(i.product_id),
+        item_name: i.name,
+        quantity: i.quantity,
+        price: (i.price_cents || 0) / 100
+      }))
+    });
+  }
+
+  // Amplitude rich purchase
+  if (window.amplitude && typeof amplitude.track === 'function') {
+  amplitude.track('purchase', {
+    total_cents: data.total_cents,
+    currency: data.currency,
+    items: data.items
+  });
+}
 }
 window.addEventListener('DOMContentLoaded', init);
 </script>
+
 </head><body>
 <header></header>
 <div class="container">
