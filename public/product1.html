@@ -14,16 +14,20 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Starter Bundle</title>
 <link rel="stylesheet" href="/css/style.css">
-<!-- Analytics placeholders: insert Amplitude/GA script tags here later -->
 <script src="/js/common.js" defer></script>
+<!-- If you use a shared analytics file, include it here:
+<script src="/js/analytics.js" defer></script>
+-->
 <script defer>
 async function init(){
   await buildTopBar({hasBack:true});
   try{
     const r = await fetch('/api/products/1');
-    const p = await r.json();
-    document.getElementById('price').textContent = '$ ' + (p.price_cents/100).toFixed(2);
-  }catch(e){ /* ok if API not live yet */ }
+    if(r.ok) {
+      const p = await r.json();
+      document.getElementById('price').textContent = '$ ' + (p.price_cents/100).toFixed(2);
+    }
+  }catch(e){}
 }
 window.addEventListener('DOMContentLoaded', init);
 </script>
@@ -31,23 +35,13 @@ window.addEventListener('DOMContentLoaded', init);
 <header></header>
 <div class="container">
   <div class="hero">
-    <img src="/img/p1.png" alt="Starter Bundle">
+    <img src="/img/p1.png" alt="Starter Bundle" width="300" height="300" style="width:300px;height:300px;object-fit:cover;border-radius:12px">
     <div>
       <h1 id="title">Starter Bundle</h1>
       <p class="small">Essential tools to get going fast.</p>
       <p id="price" class="price">$ --</p>
       <div class="actions"><button class="btn primary" onclick="addToCart(1)">Add to Cart</button></div>
     </div>
-  </div>
-  <div class="sep"></div>
-  <div class="features">
-    <div class="card">Quick setup wizard</div><div class="card">3 landing page templates</div><div class="card">Email capture form</div><div class="card">Basic analytics hooks (placeholders)</div>
-  </div>
-  <div class="sep"></div>
-  <div class="card" style="padding:16px">
-    <h3>Overview</h3>
-    <p>Perfect for launching your first funnel. Clean design, easy to edit, and optimized for conversions out of the box.</p>
-    <p class="note">Tracking placeholders are ready — later you can paste Amplitude & GA snippets in the &lt;head&gt;.</p>
   </div>
 </div>
 </body></html>

@@ -14,16 +14,20 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ultimate VIP</title>
 <link rel="stylesheet" href="/css/style.css">
-<!-- Analytics placeholders: insert Amplitude/GA script tags here later -->
 <script src="/js/common.js" defer></script>
+<!-- If you use a shared analytics file, include it here:
+<script src="/js/analytics.js" defer></script>
+-->
 <script defer>
 async function init(){
   await buildTopBar({hasBack:true});
   try{
     const r = await fetch('/api/products/3');
-    const p = await r.json();
-    document.getElementById('price').textContent = '$ ' + (p.price_cents/100).toFixed(2);
-  }catch(e){ /* ok if API not live yet */ }
+    if(r.ok) {
+      const p = await r.json();
+      document.getElementById('price').textContent = '$ ' + (p.price_cents/100).toFixed(2);
+    }
+  }catch(e){}
 }
 window.addEventListener('DOMContentLoaded', init);
 </script>
@@ -31,23 +35,13 @@ window.addEventListener('DOMContentLoaded', init);
 <header></header>
 <div class="container">
   <div class="hero">
-    <img src="/img/p3.png" alt="Ultimate VIP">
+    <img src="/img/p3.png" alt="Ultimate VIP" width="300" height="300" style="width:300px;height:300px;object-fit:cover;border-radius:12px">
     <div>
       <h1 id="title">Ultimate VIP</h1>
       <p class="small">Done-with-you premium package.</p>
       <p id="price" class="price">$ --</p>
       <div class="actions"><button class="btn primary" onclick="addToCart(3)">Add to Cart</button></div>
     </div>
-  </div>
-  <div class="sep"></div>
-  <div class="features">
-    <div class="card">All Pro features</div><div class="card">Priority support channel</div><div class="card">Weekly optimization tips</div><div class="card">Extended templates library</div>
-  </div>
-  <div class="sep"></div>
-  <div class="card" style="padding:16px">
-    <h3>Overview</h3>
-    <p>White-glove onboarding and a full suite of templates so you can go from idea to revenue with minimal friction.</p>
-    <p class="note">Tracking placeholders are ready — later you can paste Amplitude & GA snippets in the &lt;head&gt;.</p>
   </div>
 </div>
 </body></html>
