@@ -14,20 +14,16 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ultimate VIP</title>
 <link rel="stylesheet" href="/css/style.css">
+<!-- Analytics placeholders: insert Amplitude/GA script tags here later -->
 <script src="/js/common.js" defer></script>
-<!-- If you use a shared analytics file, include it here:
-<script src="/js/analytics.js" defer></script>
--->
 <script defer>
 async function init(){
   await buildTopBar({hasBack:true});
   try{
     const r = await fetch('/api/products/3');
-    if(r.ok) {
-      const p = await r.json();
-      document.getElementById('price').textContent = '$ ' + (p.price_cents/100).toFixed(2);
-    }
-  }catch(e){}
+    const p = await r.json();
+    document.getElementById('price').textContent = '$ ' + (p.price_cents/100).toFixed(2);
+  }catch(e){ /* ok if API not live yet */ }
 }
 window.addEventListener('DOMContentLoaded', init);
 </script>
@@ -43,5 +39,14 @@ window.addEventListener('DOMContentLoaded', init);
       <div class="actions"><button class="btn primary" onclick="addToCart(3)">Add to Cart</button></div>
     </div>
   </div>
+  <div class="sep"></div>
+  <div class="features">
+    <div class="card">All Pro features</div><div class="card">Priority support channel</div><div class="card">Weekly optimization tips</div><div class="card">Extended templates library</div>
+  </div>
+  <div class="sep"></div>
+  <div class="card" style="padding:16px">
+    <h3>Overview</h3>
+    <p>White-glove onboarding and a full suite of templates so you can go from idea to revenue with minimal friction.</p>
+    </div>
 </div>
 </body></html>
