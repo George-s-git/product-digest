@@ -34,7 +34,7 @@ async function buildTopBar({hasBack=false}){
     );
   }else{
     right = el('div',{},
-      el('a',{href:'/login.html','class':'btn'}, 'Log In'),
+      el('a',{href:'/login.html','class':'btn', id:'authCta'}, 'Log in / Create account'),
       ' ',
       el('a',{href:'/login.html','class':'btn'}, 'Cart (0)')
     );
