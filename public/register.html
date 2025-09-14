@@ -20,9 +20,29 @@ async function init(){
   await buildTopBar({hasBack:true});
   const f = document.querySelector('form');
   f.addEventListener('submit', async (e)=>{
-    e.preventDefault();
-    const payload = { name: f.name.value.trim(), surname: f.surname.value.trim(), email: f.email.value.trim(), pass: f.pass.value };
+  e.preventDefault();
+  const msg = document.getElementById('regMsg');
+  msg.style.color=''; msg.textContent=''; msg.innerHTML='';
+  const payload = { name: f.name.value.trim(), surname: f.surname.value.trim(), email: f.email.value.trim(), pass: f.pass.value };
+  try{
     const res = await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)});
+    if(res.ok){
+      msg.style.color = '#0a7';
+      msg.innerHTML = 'Your account has been successfully created, <button class="btn" id="goLogin">Log In</button> now';
+      const go = document.getElementById('goLogin');
+      if(go){ go.addEventListener('click', ()=> window.location.href='/login.html'); }
+    } else {
+      const t = await res.text();
+      let m = 'Registration failed';
+      if (t && t.toLowerCase().includes('already')) m = 'This e-mail/user is already registered';
+      msg.style.color = '#d00';
+      msg.textContent = m;
+    }
+  }catch(err){
+    msg.style.color = '#d00';
+    msg.textContent = 'Registration failed';
+  }
+});
     if(res.ok) window.location.href='/'; else alert('Registration failed');
   });
 
@@ -54,6 +74,7 @@ window.addEventListener('DOMContentLoaded', init);
   <div class="actions">
     <button id="createBtn" class="btn primary" type="submit">Create account</button>
   </div>
+<div id="regMsg" class="small" style="margin-top:12px"></div>
 </form>
 </div>
 </body></html>
