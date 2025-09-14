@@ -26,15 +26,21 @@ async function buildTopBar({hasBack=false}){
     hasBack ? el('a',{href:'/', 'class':'btn'}, '<< Back to main') : el('span')
   );
   let right;
-  if(s.authenticated){
-    right = el('div',{},
+  if(s.authenticated){ right = el('div',{},
       el('a',{href:'/profile.html','class':'btn'}, s.user.name || s.user.email),
       ' ',
-      el('a',{href:'/cart.html','class':'btn'}, `Cart (${s.cartCount||0})`)
+      el('a',{href:'/cart.html','class':'btn'}, `Cart (${s.cartCount||0})`),
+      ' ',
+      el('button',{'class':'btn', id:'logoutTop', onclick: async ()=>{
+        if (window.gtag) gtag('event','logout');
+        if (window.amplitude && typeof amplitude.track === 'function') { amplitude.track('logout', {}); }
+        await fetch('/api/logout',{method:'POST', credentials:'include'});
+        window.location.href='/';
+      }}, 'Log Out')
     );
   }else{
     right = el('div',{},
-      el('a',{href:'/login.html','class':'btn'}, 'Log In'),
+      el('a',{href:'/login.html','class':'btn'}, 'Log in/Create account'),
       ' ',
       el('a',{href:'/login.html','class':'btn'}, 'Cart (0)')
     );
