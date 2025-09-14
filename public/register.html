@@ -19,14 +19,42 @@
 async function init(){
   await buildTopBar({hasBack:true});
   const f = document.querySelector('form');
-  f.addEventListener('submit', async (e)=>{
+  
+f.addEventListener('submit', async (e)=>{
   e.preventDefault();
   const msg = document.getElementById('regMsg');
   if (msg) { msg.style.color=''; msg.textContent=''; msg.innerHTML=''; }
-  const payload = { name: f.name.value.trim(), surname: f.surname.value.trim(), email: f.email.value.trim(), pass: f.pass.value };
+  const payload = {
+    name: f.name.value.trim(),
+    surname: f.surname.value.trim(),
+    email: f.email.value.trim(),
+    pass: f.pass.value
+  };
   try{
-    const res = await fetch('/api/register', { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body: JSON.stringify(payload) });
+    const res = await fetch('/api/register', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      credentials:'include',
+      body: JSON.stringify(payload)
+    });
     if (res.ok) {
+      if (msg) {
+        msg.style.color = '#0a7';
+        msg.innerHTML = 'Your account has been successfully created, <button class="btn" id="goLogin">Log In</button> now';
+        const go = document.getElementById('goLogin');
+        if (go) go.addEventListener('click', ()=> window.location.href='/login.html');
+      }
+    } else {
+      const t = await res.text();
+      let m = 'Registration failed';
+      if (t && /already/i.test(t)) m = 'This e-mail/user is already registered';
+      if (msg) { msg.style.color = '#d00'; msg.textContent = m; }
+    }
+  } catch(err) {
+    if (msg) { msg.style.color = '#d00'; msg.textContent = 'Registration failed'; }
+  }
+});
+if (res.ok) {
       if (msg) {
         msg.style.color = '#0a7';
         msg.innerHTML = 'Your account has been successfully created, <button class="btn" id="goLogin">Log In</button> now';
