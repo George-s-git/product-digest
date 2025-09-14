@@ -137,7 +137,11 @@ app.post('/api/cart/add', requireAuth, async (req,res)=>{
 app.post('/api/cart/remove', requireAuth, async (req,res)=>{
   const {product_id} = req.body || {};
   if(!product_id) return res.status(400).send('product_id required');
-  await query('DELETE FROM carts WHERE user_id=$1 AND product_id=$2',[req.userId, product_id]);
+  const r = await query('UPDATE carts SET quantity = quantity - 1 WHERE user_id=$1 AND product_id=$2 RETURNING quantity', [req.userId, product_id]);
+  if (r.rowCount === 0) return res.status(404).send('Not found');
+  if ((r.rows[0].quantity||0) <= 0) {
+    await query('DELETE FROM carts WHERE user_id=$1 AND product_id=$2', [req.userId, product_id]);
+  }
   res.json({ok:true});
 });
 
